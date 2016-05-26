@@ -18,7 +18,9 @@ export function testSuite () {
   test("full open frame", function(){
     testScorer([0, 0], [0]);
     testScorer([0, 1], [1]);
+    testScorer([1, 1], [2]);
   });
+
 }
 
 function testScorer(fromSource, expected) {

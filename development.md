@@ -115,21 +115,27 @@ export function scorer$(fromSource) {
 
 ## 3. Full Open Frame
 
-testsuite.ts
-```typescript
-test("full open frame", function(){
-  testScorer([0, 0], [0]);
-});
-```
 scorer.ts
-
 ```typescript
 export function scorer$(fromSource) {
   return Observable.from(fromSource);
 }
 ```
 
+testsuite.ts
+```typescript
+test("full open frame", function(){
+  testScorer([0, 0], [0]);
+});
+```
+
 # 4. Full Open Frame 2
+scorer.ts
+```typescript
+export function scorer$(fromSource) {
+  return Observable.from(fromSource).take(1);
+}
+```
 
 testsuite.ts
 ```typescript
@@ -138,10 +144,23 @@ test("full open frame", function(){
   testScorer([0, 1], [1]);
 });
 ```
-scorer.ts
 
-```typescript
+# 5. Full Open Frame 3
+
+scorer.ts
+```typecript
 export function scorer$(fromSource) {
-  return Observable.from(fromSource).take(1);
+  return Observable.from(fromSource).takeLast(1);
 }
 ```
+
+testsuite.ts
+```typescript
+test("full open frame", function(){
+  testScorer([0, 0], [0]);
+  testScorer([0, 1], [1]);
+  testScorer([1, 1], [2]);
+});
+```
+
+## 6. Two Open Frames
