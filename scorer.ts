@@ -2,5 +2,9 @@ import { Observable } from "rxjs";
 
 export function scorer$(fromSource) {
   return Observable.from(fromSource)
-    .reduce((acc: any, curr) => acc + curr);
+    .windowCount(2)
+    .mergeMap(frame =>
+      frame
+        .reduce((acc: any, curr) => acc + curr)
+    );
 }

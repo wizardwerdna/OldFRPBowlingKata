@@ -23,6 +23,7 @@ export function testSuite () {
 
   test("two open frames", function(){
     testScorer([0, 0, 1, 2], [0, 3]);
+    testScorer([0, 1, 1, 2], [1, 4]);
   });
 }
 

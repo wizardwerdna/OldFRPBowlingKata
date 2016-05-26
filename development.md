@@ -162,7 +162,6 @@ test("full open frame", function(){
   testScorer([1, 1], [2]);
 });
 ```
-
 ## 6. Two Open Frames
 
 scorer.ts
@@ -176,7 +175,24 @@ export function scorer$(fromSource) {
 testsuite.ts
 ```typecript
 test("two open frames", function(){
-  testScorer([0, 0, 3, 4], [0, 7]);
+  testScorer([0, 0, 1, 2], [0, 3]);
 });
 ```
 
+## 7. Two Open Frames 2
+
+
+scorer.ts
+```typescript
+export function scorer$(fromSource) {
+  return Observable.from(fromSource)
+    .reduce((acc: any, curr) => acc + curr);
+}
+```
+
+testsuite.ts
+```typecript
+test("two open frames", function(){
+  testScorer([0, 0, 1, 2], [0, 3]);
+});
+```
