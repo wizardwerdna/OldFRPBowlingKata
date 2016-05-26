@@ -1,6 +1,5 @@
 import { Observable } from "rxjs";
-
-const scorer$ = (fromSource) => { return Observable.throw("funny"); };
+import { scorer$ } from "./scorer";
 
 export function testSuite () {
 
@@ -9,13 +8,20 @@ export function testSuite () {
   });
 
   test("should score empty game", function(){
-    scorer$([]).toArray()
-      .subscribe(
-        result => assertEqual([], result),
-        error  => console.error("Error: ", error)
-      );
+    testScorer([], []);
   });
 
+  test("partial open frame", function(){
+    testScorer([0], [0]);
+  });
+}
+
+function testScorer(fromSource, expected) {
+  scorer$(fromSource).toArray()
+  .subscribe(
+    result => assertEqual(expected, result),
+    error  => console.error("Error: ", error)
+  );
 }
 
 function assertEqual(expected, value) {
