@@ -164,3 +164,19 @@ test("full open frame", function(){
 ```
 
 ## 6. Two Open Frames
+
+scorer.ts
+```typescript
+export function scorer$(fromSource) {
+  return Observable.from(fromSource)
+    .reduce((acc: any, curr) => acc + curr);
+}
+```
+
+testsuite.ts
+```typecript
+test("two open frames", function(){
+  testScorer([0, 0, 3, 4], [0, 7]);
+});
+```
+

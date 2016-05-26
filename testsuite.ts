@@ -21,6 +21,9 @@ export function testSuite () {
     testScorer([1, 1], [2]);
   });
 
+  test("two open frames", function(){
+    testScorer([0, 0, 1, 2], [0, 3]);
+  });
 }
 
 function testScorer(fromSource, expected) {
