@@ -73,3 +73,51 @@ export function test(testName, tests) {
   console.groupEnd();
 }
 ```
+
+## 2. Partial Open Frame
+
+testsuite.ts
+```typescript
+import { scorer$ } from "./scorer";
+
+export function testSuite () {
+
+  test("should know the truth", function(){
+    assertEqual(true, true);
+  });
+
+  test("should score empty game", function(){
+    testScorer([], []);
+  });
+
+  test("partial open frame", function(){
+    testScorer([0], [0]);
+  });
+}
+
+function testScorer(fromSource, expected) {
+  scorer$(fromSource).toArray()
+  .subscribe(
+    result => assertEqual(expected, result),
+    error  => console.error("Error: ", error)
+  );
+}
+```
+
+scorer.ts
+```typescript
+import { Observable } from "rxjs";
+
+export function scorer$(fromSource) {
+  return Observable.empty();
+}
+```
+
+## 3. Full Open Frame
+
+testsuite.ts
+```typescript
+test("full open frame", function(){
+  testScorer([0, 0], [0]);
+});
+```

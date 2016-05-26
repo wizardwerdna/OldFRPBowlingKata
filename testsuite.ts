@@ -14,6 +14,10 @@ export function testSuite () {
   test("partial open frame", function(){
     testScorer([0], [0]);
   });
+
+  test("full open frame", function(){
+    testScorer([0, 0], [0]);
+  });
 }
 
 function testScorer(fromSource, expected) {

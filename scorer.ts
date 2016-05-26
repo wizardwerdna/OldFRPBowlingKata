@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
 
 export function scorer$(fromSource) {
-  return Observable.empty();
+  return Observable.from(fromSource);
 }
