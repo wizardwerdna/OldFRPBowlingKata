@@ -121,3 +121,27 @@ test("full open frame", function(){
   testScorer([0, 0], [0]);
 });
 ```
+scorer.ts
+
+```typescript
+export function scorer$(fromSource) {
+  return Observable.from(fromSource);
+}
+```
+
+# 4. Full Open Frame 2
+
+testsuite.ts
+```typescript
+test("full open frame", function(){
+  testScorer([0, 0], [0]);
+  testScorer([0, 1], [1]);
+});
+```
+scorer.ts
+
+```typescript
+export function scorer$(fromSource) {
+  return Observable.from(fromSource).take(1);
+}
+```

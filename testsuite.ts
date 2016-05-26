@@ -17,6 +17,7 @@ export function testSuite () {
 
   test("full open frame", function(){
     testScorer([0, 0], [0]);
+    testScorer([0, 1], [1]);
   });
 }
 
