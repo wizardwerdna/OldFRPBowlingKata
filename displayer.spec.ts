@@ -9,6 +9,9 @@ export function displayer$Tests() {
   test("displaying gutter ball", function(){
     testDisplayer([0], "-");
   });
+  test("displaying strike", function(){
+    testDisplayer([10], " X");
+  });
 }
 
 function testDisplayer(fromSource, expected) {

@@ -435,7 +435,7 @@ function testDisplayer(fromSource, expected) {
 }
 ```
 
-### 21.  Display Empty String
+### 21.  Display Gutter Ball
 
 displayer.ts
 ```typescript
@@ -450,3 +450,21 @@ test("displaying gutter ball", function(){
   testDisplayer([0], "-");
 });
 ```
+
+### 22.  Display Strike
+
+displayer.ts
+```typescript
+export function displayer$(fromSource) {
+  return Observable.from(fromSource)
+    .map(roll => "-");
+```
+
+displayer.spec.ts
+```typescript
+test("displaying strike", function(){
+  testDisplayer([10], " X");
+});
+```
+
+
