@@ -31,11 +31,13 @@ export function scorer$(fromSource) {
   const sourceToFrame$ = fromSource =>
     Observable.from(fromSource)
       .bufferCount(3, 1)
+      .map(trip => trip.concat(NaN, NaN, NaN).slice(0, 3))
       .scan(frameReducer, {isLastInFrame: true, frame: 0});
 
   return sourceToFrame$(fromSource)
     .groupBy(roll => roll.frame)
     .mergeMap(frameScorer)
     .scan(sumReducer)
-    .take(10);
+    .take(10)
+    .filter(roll => !isNaN(roll));
 }

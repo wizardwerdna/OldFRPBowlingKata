@@ -76,6 +76,15 @@ export function test(testName, tests) {
 
 ## 2. Partial Open Frame
 
+scorer.ts
+```typescript
+import { Observable } from "rxjs";
+
+export function scorer$(fromSource) {
+  return Observable.empty();
+}
+```
+
 testsuite.ts
 ```typescript
 import { scorer$ } from "./scorer";
@@ -101,15 +110,6 @@ function testScorer(fromSource, expected) {
     result => assertEqual(expected, result),
     error  => console.error("Error: ", error)
   );
-}
-```
-
-scorer.ts
-```typescript
-import { Observable } from "rxjs";
-
-export function scorer$(fromSource) {
-  return Observable.empty();
 }
 ```
 
@@ -196,7 +196,7 @@ test("two open frames", function(){
 });
 ```
 
-## 8. one completed spare
+## 8. One Completed Spare
 
 scorer.ts
 ```typescript
@@ -218,7 +218,7 @@ test("one completed spare", function(){
 });
 ```
 
-## 9. one completed spare 2
+## 9. One Completed Spare 2
 
 scorer.ts
 ```typescript
@@ -242,7 +242,7 @@ test("one completed spare", function(){
 });
 ```
 
-## 10. one completed strike
+## 10. One Completed Strike
 
 scorer.ts
 ```typescript
@@ -351,3 +351,49 @@ test("perfect game", function(){
 });
 ```
 
+## 12. Completed Scorer
+
+scorer.ts
+```typescript
+export function scorer$(fromSource) {
+  const sumReducer = (acc, curr) => acc + curr;
+
+  const frameScorer = frame =>
+    frame.
+      take(1).
+      map(rolls =>
+          rolls.pins[0] === 10 || rolls.pins[0] + rolls.pins[1] === 10 ?
+          rolls.pins.reduce(sumReducer) :
+          rolls.pins[0] + (rolls.pins[1] || 0)
+      );
+
+  const frameReducer =
+    (acc, curr) => {
+      if (curr[0] === 10 && acc.isLastInFrame)
+        return {
+          frame: acc.frame + 1,
+          isLastInFrame: true,
+          pins: curr
+        };
+      else
+        return {
+          frame: acc.isLastInFrame ? acc.frame + 1 : acc.frame,
+          isLastInFrame: !acc.isLastInFrame,
+          pins: curr
+        };
+    };
+
+  const sourceToFrame$ = fromSource =>
+    Observable.from(fromSource)
+      .bufferCount(3, 1)
+      .map(trip => trip.concat(NaN, NaN, NaN).slice(0, 3))
+      .scan(frameReducer, {isLastInFrame: true, frame: 0});
+
+  return sourceToFrame$(fromSource)
+    .groupBy(roll => roll.frame)
+    .mergeMap(frameScorer)
+    .scan(sumReducer)
+    .take(10)
+    .filter(roll => !isNaN(roll));
+}
+```
