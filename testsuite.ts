@@ -29,6 +29,11 @@ export function testSuite () {
   test("one completed spare", function(){
     testScorer([5, 5, 5], [15, 20]);
     testScorer([5, 5, 9], [19, 28]);
+    testScorer([5, 5, 5, 5, 5], [15, 30, 35]);
+  });
+
+  test("one completed strike", function(){
+    testScorer([10, 1, 2], [13, 16]);
   });
 }
 
