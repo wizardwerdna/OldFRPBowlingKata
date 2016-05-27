@@ -38,7 +38,7 @@ test(">>>> BEGIN FRP Bowling Test Suite", testSuite);
 ```
 
 testsuite.ts
-```
+```typescript
 import { Observable } from "rxjs";
 
 const scorer$ = (fromSource) => { return Observable.throw("funny"); };
@@ -275,7 +275,7 @@ test("one completed strike", function(){
 ## 11. Partial Mark Frames
 
 scorer.ts
-```
+```typescript
 export function scorer$(fromSource) {
   const sumReducer = (acc, curr) => acc + curr;
 
