@@ -21,6 +21,21 @@ export function displayer$Tests() {
   });
   test("display spares", function(){
     testDisplayer([5, 5, 5], "5/5");
+    testDisplayer([0, 10, 5], "-/5");
+  });
+  test("display complete games", function(){
+    testDisplayer(
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "--------------------"
+    );
+    testDisplayer(
+      [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+      "5/5/5/5/5/5/5/5/5/5/5"
+    );
+    testDisplayer(
+      [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+      [" X X X X X X X X XXXX"]
+    );
   });
 }
 

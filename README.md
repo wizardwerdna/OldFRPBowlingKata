@@ -488,7 +488,8 @@ test("displaying other single rolls", function(){
   testDisplayer([3], "3");
 });
 ```
-### 23.  Display Other Rolls
+
+### 24. Display Single Spares 
 
 displayer.ts
 ```typescript
@@ -497,7 +498,7 @@ export function displayer$(fromSource) {
   .map(roll => {
     if ( roll === 0 )
       return "-";
-    else if ( roll === 10 )
+    else
       return " X";
     else
       return roll.toString();
@@ -513,6 +514,60 @@ test("displaying open frames and strikes", function(){
 });
 test("display spares", function(){
   testDisplayer([5, 5, 5], "5/5");
+});
+```
+
+### 25. Display Complete Games
+
+displayer.ts
+```typescript
+export function displayer$(fromSource) {
+  return Observable.from(fromSource)
+  .scan((acc: any, curr) => {
+    if ( curr === 0 )
+      return {
+        carry: isNaN(acc.carry) ? curr : NaN,
+        pins: "-"
+      };
+    else if ( curr === 10 && isNaN(acc.carry))
+      return {
+        carry: NaN,
+        pins: " X"
+      };
+    else if ( curr + acc.carry === 10 )
+      return {
+       carry: NaN,
+       pins: "/" };
+    else
+      return {
+        carry: isNaN(acc.carry) ? curr : NaN,
+        pins: curr.toString()
+      };
+  }, {carry: NaN})
+  .do(x => console.log(x))
+  .map(roll => roll.pins);
+}
+```
+
+displayer.spec.ts
+```typescript
+test("display spares", function(){
+  testDisplayer([5, 5, 5], "5/5");
+  testDisplayer([0, 10, 5], "-/5");
+});
+test("display complete games", function(){
+  testDisplayer(
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "--------------------"
+  );
+  testDisplayer(
+    [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+    "5/5/5/5/5/5/5/5/5/5/5"
+  );
+  testDisplayer(
+    [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+    [" X X X X X X X X XXXX"]
+  );
 });
 ```
 
