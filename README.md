@@ -467,4 +467,25 @@ test("displaying strike", function(){
 });
 ```
 
+### 23.  Display Other Rolls
+
+displayer.ts
+```typescript
+export function displayer$(fromSource) {
+  return Observable.from(fromSource)
+  .map(roll => {
+    if ( roll === 0 )
+      return "-";
+    else
+      return " X";
+  });
+}
+```
+
+displayer.spec.ts
+```typescript
+test("displaying other single rolls", function(){
+  testDisplayer([3], "3");
+});
+```
 

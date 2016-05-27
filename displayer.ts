@@ -1,5 +1,10 @@
 import { Observable } from "rxjs";
 export function displayer$(fromSource) {
   return Observable.from(fromSource)
-    .map(roll => "-");
+  .map(roll => {
+    if ( roll === 0 )
+      return "-";
+    else
+      return " X";
+  });
 }

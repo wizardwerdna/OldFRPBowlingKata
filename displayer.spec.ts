@@ -3,14 +3,17 @@ import { displayer$ } from "./displayer";
 import { test, assertEqual } from "./testsuite.ts";
 
 export function displayer$Tests() {
-  test("displaying empty game", function(){
+  test("displaying single empty game", function(){
     testDisplayer([], "");
   });
-  test("displaying gutter ball", function(){
+  test("displaying single gutter ball", function(){
     testDisplayer([0], "-");
   });
   test("displaying strike", function(){
     testDisplayer([10], " X");
+  });
+  test("displaying other single rolls", function(){
+    testDisplayer([3], "3");
   });
 }
 
