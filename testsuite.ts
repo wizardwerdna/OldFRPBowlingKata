@@ -29,6 +29,42 @@ export function testSuite () {
   test("one completed spare", function(){
     testScorer([5, 5, 5], [15, 20]);
     testScorer([5, 5, 9], [19, 28]);
+    testScorer([5, 5, 5, 5, 5], [15, 30, 35]);
+  });
+
+  test("one completed strike", function(){
+    testScorer([10, 1, 2], [13, 16]);
+  });
+
+  test("zero game", function(){
+    testScorer(
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    );
+  });
+
+  test("spare game", function(){
+    testScorer(
+      [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+      [15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
+    );
+  });
+
+  test("perfect game", function(){
+    testScorer(
+      [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+      [30, 60, 90, 120, 150, 180, 210, 240, 270, 300]
+    );
+  });
+
+  test("partial spare", function(){
+    testScorer([5, 5], []);
+  });
+
+  test("partial strike", function(){
+    testScorer([10], []);
+    testScorer([10, 5], []);
+    testScorer([10, 10], []);
   });
 }
 

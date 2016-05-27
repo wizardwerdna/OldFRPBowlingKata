@@ -242,3 +242,112 @@ test("one completed spare", function(){
 });
 ```
 
+## 10. one completed strike
+
+scorer.ts
+```typescript
+export function scorer$(fromSource) {
+  const sumReducer = (acc, curr) => acc + curr;
+  const frameScorer = frame =>
+    frame.
+      take(1).
+      map(rolls =>
+        rolls[0] + rolls[1] === 10 ?
+          rolls.reduce(sumReducer) :
+          rolls[0] + (rolls[1] || 0)
+      );
+
+  return Observable.from(fromSource)
+    .bufferCount(3, 1)    // change rolls into triplets
+    .windowCount(2)       // break frames into two-roll sets
+    .mergeMap(frameScorer)// score each frame separately
+    .scan(sumReducer);    // add the frames
+}
+```
+
+testsuite.ts
+```typecript
+test("one completed strike", function(){
+  testScorer([10, 1, 2], [13, 16]);
+});
+```
+
+## 11. Partial Mark Frames
+
+scorer.ts
+```
+export function scorer$(fromSource) {
+  const sumReducer = (acc, curr) => acc + curr;
+
+  const frameScorer = frame =>
+    frame.
+      take(1).
+      map(rolls =>
+          rolls.pins[0] === 10 || rolls.pins[0] + rolls.pins[1] === 10 ?
+          rolls.pins.reduce(sumReducer) :
+          rolls.pins[0] + (rolls.pins[1] || 0)
+      );
+
+  const frameReducer =
+    (acc, curr) => {
+      if (curr[0] === 10 && acc.isLastInFrame)
+        return {
+          frame: acc.frame + 1,
+          isLastInFrame: true,
+          pins: curr
+        };
+      else
+        return {
+          frame: acc.isLastInFrame ? acc.frame + 1 : acc.frame,
+          isLastInFrame: !acc.isLastInFrame,
+          pins: curr
+        };
+    };
+
+  const sourceToFrame$ = fromSource =>
+    Observable.from(fromSource)
+      .bufferCount(3, 1)
+      .scan(frameReducer, {isLastInFrame: true, frame: 0});
+
+  return sourceToFrame$(fromSource)
+    .groupBy(roll => roll.frame)
+    .mergeMap(frameScorer)
+    .scan(sumReducer)
+    .take(10);
+}
+```
+
+testsuite.ts
+```typecript
+test("partial spare", function(){
+  testScorer([5, 5], []);
+});
+
+test("partial strike", function(){
+  testScorer([10], []);
+  testScorer([10, 5], []);
+  testScorer([10, 10], []);
+});
+
+test("zero game", function(){
+  testScorer(
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  );
+});
+
+test("spare game", function(){
+  testScorer(
+    [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+    [15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
+  );
+});
+
+test("perfect game", function(){
+  testScorer(
+    [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+    [30, 60, 90, 120, 150, 180, 210, 240, 270, 300]
+  );
+});
+```
+
