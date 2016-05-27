@@ -25,6 +25,10 @@ export function testSuite () {
     testScorer([0, 0, 1, 2], [0, 3]);
     testScorer([0, 1, 1, 2], [1, 4]);
   });
+
+  test("one completed spare", function(){
+    testScorer([5, 5, 5], [15, 20]);
+  });
 }
 
 function testScorer(fromSource, expected) {

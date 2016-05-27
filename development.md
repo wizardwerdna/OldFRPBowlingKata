@@ -181,7 +181,6 @@ test("two open frames", function(){
 
 ## 7. Two Open Frames 2
 
-
 scorer.ts
 ```typescript
 export function scorer$(fromSource) {
@@ -193,6 +192,28 @@ export function scorer$(fromSource) {
 testsuite.ts
 ```typecript
 test("two open frames", function(){
-  testScorer([0, 0, 1, 2], [0, 3]);
+  testScorer([0, 1, 1, 2], [1, 4]);
 });
 ```
+## 8. one completed spare
+
+scorer.ts
+```typescript
+export function scorer$(fromSource) {
+  const sumReducer = (acc, curr) => acc + curr;
+  const frameScorer = frame => frame.reduce(sumReducer);
+
+  return Observable.from(fromSource)
+    .windowCount(2)
+    .mergeMap(frame => frame.reduce(sumReducer))
+    .scan(sumReducer);
+}
+```
+
+testsuite.ts
+```typecript
+test("one completed spare", function(){
+  testScorer([5, 5, 5], [15, 20]);
+});
+```
+
