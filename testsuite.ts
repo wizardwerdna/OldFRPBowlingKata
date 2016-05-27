@@ -16,8 +16,11 @@ export function assertEqual(expected, value) {
   }
 }
 
-export function test(testName, tests) {
-  console.group(testName);
+export function test(testName, tests, isOpen = true) {
+  if (isOpen)
+    console.group(testName);
+  else
+    console.groupCollapsed(testName);
   tests();
   console.groupEnd();
 }

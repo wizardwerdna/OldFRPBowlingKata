@@ -397,3 +397,56 @@ export function scorer$(fromSource) {
     .filter(roll => !isNaN(roll));
 }
 ```
+
+# Displayer
+
+## 20. Display Empty Game 
+
+displayer.ts
+```typescript
+import { Observable } from "rxjs";
+export function displayer$(fromSource) {
+  return Observable.throw("no result");
+}
+```
+
+displayer.spec.ts
+```typescript
+import { Observable } from "rxjs";
+import { displayer$ } from "./displayer";
+import { test, assertEqual } from "./testsuite.ts";
+
+export function displayer$Tests() {
+  test("testing truth", function(){
+    assertEqual(true, true);
+  });
+
+  test("displaying empty game", function(){
+    testDisplayer([], "");
+  });
+}
+
+function testDisplayer(fromSource, expected) {
+  displayer$(fromSource).toArray()
+  .subscribe(
+    result => assertEqual(expected, result),
+    error  => console.error("Error: ", error)
+  );
+}
+```
+
+### 21.  Display Empty String
+
+displayer.ts
+```typescript
+export function displayer$(fromSource) {
+  return Observable.empty();
+}
+```
+
+displayer.spec.ts
+```typescript
+test("displaying gutter ball", function(){
+  testDisplayer([0], "-");
+});
+```
