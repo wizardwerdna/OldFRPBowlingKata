@@ -28,6 +28,7 @@ export function testSuite () {
 
   test("one completed spare", function(){
     testScorer([5, 5, 5], [15, 20]);
+    testScorer([5, 5, 9], [19, 28]);
   });
 }
 
