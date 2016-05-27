@@ -15,6 +15,13 @@ export function displayer$Tests() {
   test("displaying other single rolls", function(){
     testDisplayer([3], "3");
   });
+  test("displaying open frames and strikes", function(){
+    testDisplayer([0, 6], "-6");
+    testDisplayer([0, 6, 10, 0, 9], "-6 X-9");
+  });
+  test("display spares", function(){
+    testDisplayer([5, 5, 5], "5/5");
+  });
 }
 
 function testDisplayer(fromSource, expected) {

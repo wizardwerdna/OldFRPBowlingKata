@@ -488,4 +488,31 @@ test("displaying other single rolls", function(){
   testDisplayer([3], "3");
 });
 ```
+### 23.  Display Other Rolls
+
+displayer.ts
+```typescript
+export function displayer$(fromSource) {
+  return Observable.from(fromSource)
+  .map(roll => {
+    if ( roll === 0 )
+      return "-";
+    else if ( roll === 10 )
+      return " X";
+    else
+      return roll.toString();
+  });
+}
+```
+
+displayer.spec.ts
+```typescript
+test("displaying open frames and strikes", function(){
+  testDisplayer([0, 6], "-6");
+  testDisplayer([0, 6, 10, 0, 9], "-6 X-9");
+});
+test("display spares", function(){
+  testDisplayer([5, 5, 5], "5/5");
+});
+```
 

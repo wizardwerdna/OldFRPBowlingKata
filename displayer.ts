@@ -4,7 +4,9 @@ export function displayer$(fromSource) {
   .map(roll => {
     if ( roll === 0 )
       return "-";
-    else
+    else if ( roll === 10 )
       return " X";
+    else
+      return roll.toString();
   });
 }
