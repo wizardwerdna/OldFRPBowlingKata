@@ -14,9 +14,10 @@ test("FRP Bowling Displayer", displayer$Tests, false);
 
 const DOM = {
   reset: document.querySelector("button#reset"),
-  buttons: document.querySelectorAll("#buttons button"),
-  rollDisplay: document.querySelectorAll(".rollDisplay"),
-  frameScoreDisplay: document.querySelectorAll(".frameScoreDisplay")
+  buttonsDiv: document.querySelectorAll("#buttons button"),
+  buttons: Array.from(document.querySelectorAll("#buttons button")),
+  rollDisplay: Array.from(document.querySelectorAll(".rollDisplay")),
+  frameScoreDisplay: Array.from(document.querySelectorAll(".frameScoreDisplay"))
 };
 
 const UI = {
@@ -26,20 +27,19 @@ const UI = {
   rollDisplay: () => $(DOM.rollDisplay).text(),
   firstRollDisplay: () => DOM.rollDisplay[0].innerHTML,
   frameScoreDisplay: () =>
-    Array.from(DOM.frameScoreDisplay)
+    DOM.frameScoreDisplay
       .map(each => parseInt(each.innerHTML))
-      .filter(each => !isNaN(each))
+      .filter(each => !isNaN(each)),
+  isEnabledUpTo: (num) => {
+    const disableds = DOM.buttons.map((each: HTMLInputElement) => each.disabled);
+    return disableds.slice(0, num + 1).every(x => x === false) &&
+           disableds.slice(num + 1).every(x => x === true);
+  }
 };
-
-function isEnabledUpTo(buttons, num) {
-  const disableds = Array.from(buttons).map((each: HTMLInputElement) => each.disabled);
-  return disableds.slice(0, num + 1).every(x => x === false) &&
-         disableds.slice(num + 1).every(x => x === true);
-}
 
 const documentLoaded$ = Observable.fromEvent(document, "DOMContentLoaded");
 const reset$ = Observable.fromEvent(DOM.reset, "click");
-const button$ = Observable.fromEvent(DOM.buttons, "click");
+const button$ = Observable.fromEvent(DOM.buttonsDiv, "click");
 const roll$ = button$
   .takeUntil(reset$)
   .map((evt: MouseEvent) => parseInt((<any> evt.target).innerHTML))
@@ -55,35 +55,36 @@ const score$ = roll$.mergeMap(arr => scorer$(arr).toArray());
 const disable$ = display$.zip(score$);
 
 function clearDisplay() {
-  Array.from(DOM.buttons).forEach(each => (<HTMLInputElement> each).disabled = false);
-  Array.from(DOM.rollDisplay).forEach(each => each.innerHTML = "");
-  Array.from(DOM.frameScoreDisplay).forEach((each) => each.innerHTML = "");
+  DOM.buttons.forEach(each => (<HTMLInputElement> each).disabled = false);
+  DOM.rollDisplay.forEach(each => each.innerHTML = "");
+  DOM.frameScoreDisplay.forEach((each) => each.innerHTML = "");
 }
 
 reset$.subscribe(() => clearDisplay());
 
 display$.subscribe(display => {
-  Array.from(DOM.rollDisplay).forEach((each: any, index) =>
+  DOM.rollDisplay.forEach((each: any, index) =>
     each.innerHTML = display[index] || ""
   );
 });
 
 score$.subscribe(scores =>
-  Array.from(DOM.frameScoreDisplay).forEach((each: any, index) =>
+  DOM.frameScoreDisplay.forEach((each: any, index) =>
     each.innerHTML = (typeof scores[index] === "undefined") ? "" : scores[index]
   )
 );
 
 function enableOnlyUpTo(button) {
-  Array.from(DOM.buttons).forEach((each, index) =>
+  DOM.buttons.forEach((each, index) =>
     (<HTMLInputElement> each).disabled = index > button
   );
 }
 function isSpareAttempt(display, scores) {
-  return display.length % 2 === 1;
+  return display.length % 2 === 1 ||
+    (display.length === 20 && display[18] === "X");
 }
 function isGameOver(display, scores) {
-  return scores.length === 10 && display.length > 19;
+  return (scores.length === 10 && display.length > 19);
 }
 
 disable$.subscribe(([display, scores]) => {
@@ -119,7 +120,7 @@ test("FRP Bowling UI", function(){
     });
     test("buttons", function(){
       UI.reset();
-      assertEqual(true, isEnabledUpTo(DOM.buttons, 10));
+      assertEqual(true, UI.isEnabledUpTo(10));
     });
   });
   test("after single gutterball", function(){
@@ -136,7 +137,7 @@ test("FRP Bowling UI", function(){
     test("button", function() {
       UI.reset();
       UI.button(0);
-      assertEqual(true, isEnabledUpTo(DOM.buttons, 10));
+      assertEqual(true, UI.isEnabledUpTo(10));
     });
   });
   test("after single 5-pin roll", function(){
@@ -153,7 +154,7 @@ test("FRP Bowling UI", function(){
     test("button", function() {
       UI.reset();
       UI.button(5);
-      assertEqual(true, isEnabledUpTo(DOM.buttons, 5));
+      assertEqual(true, UI.isEnabledUpTo(5));
     });
   });
   test("after strike roll", function(){
@@ -171,7 +172,7 @@ test("FRP Bowling UI", function(){
     test("button", function() {
       UI.reset();
       UI.button(10);
-      assertEqual(true, isEnabledUpTo(DOM.buttons, 10));
+      assertEqual(true, UI.isEnabledUpTo(10));
     });
   });
   test("after unfulfilled spare", function() {
@@ -191,7 +192,7 @@ test("FRP Bowling UI", function(){
       UI.reset();
       UI.button(5);
       UI.button(5);
-      assertEqual(true, isEnabledUpTo(DOM.buttons, 10));
+      assertEqual(true, UI.isEnabledUpTo(10));
     });
   });
   test("gutterball, then reset", function(){
@@ -208,27 +209,24 @@ test("FRP Bowling UI", function(){
     test("buttons", function() {
       UI.button(0);
       UI.reset();
-      assertEqual(true, isEnabledUpTo(DOM.buttons, 10));
+      assertEqual(true, UI.isEnabledUpTo(10));
     });
   });
   test("after partial game", function(){
     test("rollDisplay", function(){
       UI.reset();
       UI.buttons([5, 5, 5, 5, 5, 5]);
-      console.log("OMG rollDisplay", UI.rollDisplay());
       assertEqual("5/5/5/", UI.rollDisplay());
     });
     test("frameScoreDisplay", function(){
       UI.reset();
       UI.buttons([5, 5, 5, 5, 5, 5]);
-      console.log("OMG rollDisplay", UI.rollDisplay());
       assertEqual([15, 30], UI.frameScoreDisplay());
     });
     test("buttons", function(){
       UI.reset();
       UI.buttons([5, 5, 5, 5, 5, 5]);
-      console.log("OMG rollDisplay", UI.rollDisplay());
-      assertEqual(true, isEnabledUpTo(DOM.buttons, 11));
+      assertEqual(true, UI.isEnabledUpTo(11));
     });
   });
   test("after guttergame", function(){
@@ -245,7 +243,7 @@ test("FRP Bowling UI", function(){
     test("buttons", function() {
       UI.reset();
       UI.buttons([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-      assertEqual(true, isEnabledUpTo(DOM.buttons, -1));
+      assertEqual(true, UI.isEnabledUpTo(-1));
     });
   });
   test("after sparegame", function(){
@@ -262,7 +260,7 @@ test("FRP Bowling UI", function(){
     test("buttons", function() {
       UI.reset();
       UI.buttons([5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]);
-      assertEqual(true, isEnabledUpTo(DOM.buttons, -1));
+      assertEqual(true, UI.isEnabledUpTo(-1));
     });
   });
   test("after perfect game", function(){
@@ -279,7 +277,32 @@ test("FRP Bowling UI", function(){
     test("butons", function() {
       UI.reset();
       UI.buttons([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]);
-      assertEqual(true, isEnabledUpTo(DOM.buttons, -1));
+      assertEqual(true, UI.isEnabledUpTo(-1));
+    });
+  });
+  test("tenth frame games", function() {
+    const nineStrikes = [10, 10, 10, 10, 10, 10, 10, 10, 10];
+    const tenStrikes = nineStrikes.concat(10);
+    test("perfect game tenth frame", function() {
+      UI.reset();
+      UI.buttons(tenStrikes);
+      assertEqual(true, UI.isEnabledUpTo(10));
+      UI.button(10);
+      assertEqual(true, UI.isEnabledUpTo(10));
+    });
+    test("strike and pins", function(){
+      UI.reset();
+      UI.buttons(tenStrikes.concat(5));
+      assertEqual(true, UI.isEnabledUpTo(5));
+      UI.button(5);
+      assertEqual(true, UI.isEnabledUpTo(-1));
+    });
+    test("spare and strike", function(){
+      UI.reset();
+      UI.buttons(nineStrikes.concat(5, 5));
+      assertEqual(true, UI.isEnabledUpTo(10));
+      UI.button(10);
+      assertEqual(true, UI.isEnabledUpTo(-1));
     });
   });
 });
