@@ -28,5 +28,7 @@ export function displayer$(fromSource) {
         chars: acc.chars + 1
       };
   }, {carry: NaN, chars: 0})
-  .map(roll => roll.pins);
+  .map(roll => roll.pins)
+  .reduce((acc, curr) => acc + curr, "")
+  ;
 }

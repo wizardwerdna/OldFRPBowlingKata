@@ -427,7 +427,7 @@ export function displayer$Tests() {
 }
 
 function testDisplayer(fromSource, expected) {
-  displayer$(fromSource).toArray()
+  displayer$(fromSource)
   .subscribe(
     result => assertEqual(expected, result),
     error  => console.error("Error: ", error)
@@ -478,7 +478,9 @@ export function displayer$(fromSource) {
       return "-";
     else
       return " X";
-  });
+  })
+  .reduce((acc, curr) => acc + curr, "")
+  ;
 }
 ```
 
@@ -502,7 +504,9 @@ export function displayer$(fromSource) {
       return " X";
     else
       return roll.toString();
-  });
+  })
+  .reduce((acc, curr) => acc + curr, "")
+  ;
 }
 ```
 
@@ -544,8 +548,9 @@ export function displayer$(fromSource) {
         pins: curr.toString()
       };
   }, {carry: NaN})
-  .do(x => console.log(x))
   .map(roll => roll.pins);
+  .reduce((acc, curr) => acc + curr, "")
+  ;
 }
 ```
 

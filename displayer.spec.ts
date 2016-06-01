@@ -39,9 +39,9 @@ export function displayer$Tests() {
 }
 
 function testDisplayer(fromSource, expected) {
-  displayer$(fromSource).toArray()
+  displayer$(fromSource)
   .subscribe(
-    result => assertEqual(expected, result.join("")),
+    result => assertEqual(expected, result),
     error  => console.error("Error: ", error)
   );
 }
