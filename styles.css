@@ -1,3 +1,11 @@
+body {background-color: #eaeaea;}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 button {
   background-color: green;
   color: white;
@@ -38,7 +46,7 @@ button#reset {
   border-right: 1pt solid black;
 }
 
-.roll-display {
+.rollDisplay {
   height: 20px;
   width: 20px;
   text-align: center;
@@ -47,12 +55,12 @@ button#reset {
   float: left;
 }
 
-.roll-display:first-child {
+.rollDisplay:first-child {
   border: none;
   padding-left: 8px;
 }
 
-.frame-score {
+.frameScoreDisplay {
   padding-right: 5px;
   margin-top: 25px;
 }
