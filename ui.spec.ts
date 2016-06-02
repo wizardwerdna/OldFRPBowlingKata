@@ -1,5 +1,22 @@
-import { UI, DOM } from "./ui";
+import { DOM } from "./ui";
 import { test, assertEqual } from "./testsuite";
+
+export const UI = {
+  reset:    () => $(DOM.reset).click(),
+  button:   x  => $(DOM.buttons).eq(x).click(),
+  buttons:  arr => arr.forEach(x => UI.button(x)),
+  rollDisplay: () => $(DOM.rollDisplay).text(),
+  firstRollDisplay: () => DOM.rollDisplay[0].innerHTML,
+  frameScoreDisplay: () =>
+    DOM.frameScoreDisplay
+      .map(each => parseInt(each.innerHTML))
+      .filter(each => !isNaN(each)),
+  isEnabledUpTo: (num) => {
+    const disableds = DOM.buttons.map((each: HTMLInputElement) => each.disabled);
+    return disableds.slice(0, num + 1).every(x => x === false) &&
+           disableds.slice(num + 1).every(x => x === true);
+  }
+};
 
 export function uiTests() {
   test("FRP Bowling UI", function(){

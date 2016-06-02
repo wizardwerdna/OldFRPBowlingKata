@@ -12,23 +12,6 @@ export const DOM = {
   frameScoreDisplay: Array.from(document.querySelectorAll(".frameScoreDisplay"))
 };
 
-export const UI = {
-  reset:    () => $(DOM.reset).click(),
-  button:   x  => $(DOM.buttons).eq(x).click(),
-  buttons:  arr => arr.forEach(x => UI.button(x)),
-  rollDisplay: () => $(DOM.rollDisplay).text(),
-  firstRollDisplay: () => DOM.rollDisplay[0].innerHTML,
-  frameScoreDisplay: () =>
-    DOM.frameScoreDisplay
-      .map(each => parseInt(each.innerHTML))
-      .filter(each => !isNaN(each)),
-  isEnabledUpTo: (num) => {
-    const disableds = DOM.buttons.map((each: HTMLInputElement) => each.disabled);
-    return disableds.slice(0, num + 1).every(x => x === false) &&
-           disableds.slice(num + 1).every(x => x === true);
-  }
-};
-
 const documentLoaded$ = Observable.fromEvent(document, "DOMContentLoaded");
 const reset$ = Observable.fromEvent(DOM.reset, "click");
 const button$ = Observable.fromEvent(DOM.buttonsDiv, "click");
