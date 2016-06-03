@@ -1,5 +1,6 @@
 import { DOM } from "./ui";
 import { test, assertEqual } from "./testsuite";
+import * as $ from "jquery";
 
 export const UI = {
   reset:    () => $(DOM.reset).click(),
